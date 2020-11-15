@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.springbootdemo.model.Employee;
 import com.springbootdemo.service.EmployeeService;
@@ -18,35 +19,34 @@ import com.springbootdemo.service.EmployeeService;
 @Controller
 @RequestMapping("/employees")
 public class EmployeeController {
-	
+
 	@Autowired
 	EmployeeService es;
 	
-	@RequestMapping("{id}")
-	 public String getEmployee(Model model,@PathVariable("id") String id)
-	 {
-		 Employee emp = es.getEmployee(Integer.parseInt(id));
-		 model.addAttribute("employee", emp);
-		 return "employeeView";
-		 
-	 }
-	 
-	 @RequestMapping("/all")
-	 @ResponseBody
-	 public Map<Integer,Employee> getAllEmployee()
-	 {
-		 return es.getAll();
-	 }
+	@RequestMapping("/showAll")
+	public String showAllEmployee(Model model) {
+		model.addAttribute("employeeDetails", es.getAll());
+		return "employeeList";
+	}
 
-		@RequestMapping("addformsave")
-		public String getPerson(Model model,Employee p) {
-			System.out.println("Updated first name is "+p.getFirstName());
+	@RequestMapping("/addEmployee")
+	public String addEmpolyeeDetails(Model model) {
+		Employee emp = new Employee();
+		model.addAttribute("employee", emp);
+		return "addEmployee";
+	}
 
-			System.out.println("Updated last name is "+p.getLastName());
-
-			System.out.println("Updated age is "+p.getAge());
-			return "employeeView";
-		}
-	 
+	
+	@RequestMapping("addformsave")
+	public String addEmployee(Model model, Employee p) {
+		Employee emp = new Employee();
+		 emp.setId(p.getId());
+		 emp.setFirstName(p.getFirstName());
+		 emp.setLastName(p.getLastName());
+		 emp.setAge(p.getAge());
+		 es.addEmployee(emp);
+		 model.addAttribute("employeeDetails", es.getAll());
+		 return "redirect:/employees/showAll";
+	}
 
 }

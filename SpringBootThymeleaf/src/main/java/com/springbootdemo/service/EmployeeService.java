@@ -44,5 +44,10 @@ public class EmployeeService {
 	{
 		return empMap;
 	}
+	
+	public void addEmployee(Employee emp)
+	{
+		empMap.put(emp.getId(), emp);
+	}
 
 }
